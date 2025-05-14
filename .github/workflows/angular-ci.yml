@@ -1,31 +1,34 @@
-name: 🚀 Deploy Angular App to GitHub Pages
+name: Deploy Angular App to GitHub Pages
 
 on:
   push:
-    branches: [main]  # or your branch name
+    branches:
+      - master  # Trigger the workflow on pushes to the master branch
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📦 Checkout Repository
-      uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: ⚙️ Set up Node.js
-      uses: actions/setup-node@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
       with:
-        node-version: '20'
+        node-version: '16'  # Use the appropriate Node.js version for your app
 
-    - name: 📥 Install Dependencies
-      run: npm ci
-
-    - name: 🔨 Build Angular Project
+    - name: Install dependencies
       run: |
-        npm run build -- --configuration production --base-href "https://davidfernandis.github.io/testing/"
+        npm install
 
-    - name: 🚀 Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4
+    - name: Build the app
+      run: |
+        ng build --configuration production --base-href "https://davidfernandis.github.io/Testing/"
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        branch: gh-pages              # Target branch
-        folder: dist/Testing          # Output folder
+        deploy_branch: gh-pages  # Specify the branch to deploy (gh-pages)
+        folder: docs  # Folder where Angular app is built (docs/ in our case)
+        token: ${{ secrets.GITHUB_TOKEN }}  # Token to authenticate the GitHub Pages deployment
